@@ -5,6 +5,10 @@ FROM alpine:3.5
 # - BSD Auth is disabled because bsd_auth.h is missing.
 # - ...
 
+if [ x"${WORKERS}" = "x" ]; then
+        WORKERS="10"
+fi
+
 RUN set -x \
     # Runtime dependencies.
  && apk add --no-cache \
@@ -38,4 +42,4 @@ COPY sockd.conf /etc/
 EXPOSE 1080
 
 ENTRYPOINT ["dumb-init"]
-CMD ["sockd"]
+CMD ["sockd","-N","${WORKERS}"]
