@@ -5,10 +5,6 @@ FROM alpine:3.5
 # - BSD Auth is disabled because bsd_auth.h is missing.
 # - ...
 
-if [ x"${WORKERS}" = "x" ]; then
-        WORKERS="10"
-fi
-
 RUN set -x \
     # Runtime dependencies.
  && apk add --no-cache \
