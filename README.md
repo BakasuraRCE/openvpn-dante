@@ -13,10 +13,15 @@ What is Dante
 Usage example
 -------------
 
-    $ docker run -d -p 1080:1080 wernight/dante
+    $ docker run -e workers=20 -d -p 1080:1080 wernight/dante
 
 Change its configuration by mounting a custom `/etc/sockd.conf`
 (see [sample config files](http://www.inet.no/dante/doc/latest/config/server.html)).
+
+
+### Change number of threads listening
+
+Use the environment variable `workers` to set the number of threads listening for connections(by default are 10)
 
 
 ### Client-side set up
