@@ -63,4 +63,4 @@ WARNING: Many browsers do **not** support SOCKS authentication (e.g. see this [C
 Feedbacks
 ---------
 
-Suggestions are welcome on our [GitHub issue tracker](https://github.com/wernight/docker-dante/issues).
+Suggestions are welcome on our [GitHub issue tracker](https://github.com/BakasuraRCE/docker-dante/issues).
