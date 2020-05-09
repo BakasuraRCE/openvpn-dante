@@ -13,7 +13,7 @@ What is Dante
 Usage example
 -------------
 
-    $ docker run -e workers=20 -d -p 1080:1080 wernight/dante
+    $ docker run -e workers=20 -d -p 1080:1080 bakasura/dante2
 
 Change its configuration by mounting a custom `/etc/sockd.conf`
 (see [sample config files](http://www.inet.no/dante/doc/latest/config/server.html)).
@@ -42,7 +42,7 @@ like for example:
 
 The default config in this image allows everyone to use the proxy. You can add a simple authentication (which will send data unencrypted) by setting up a `Dockerfile` like:
 
-    FROM wernight/dante
+    FROM bakasura/dante2
 
     # TODO: Replace 'john' and 'MyPassword' by any username/password you want.
     RUN printf 'MyPassword\nMyPassword\n' | adduser john
