@@ -39,5 +39,7 @@ COPY sockd.conf /etc/
 
 EXPOSE 1080
 
+HEALTHCHECK --start-period=1m --timeout=5s CMD curl -f https://ipinfo.io || exit 1
+
 ENTRYPOINT ["dumb-init"]
 CMD ["sh", "-c", "sockd -N ${workers}"]
