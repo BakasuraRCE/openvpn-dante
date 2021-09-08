@@ -2,10 +2,8 @@ FROM alpine:3.14
 
 ENV workers 10
 
-# Install Dante
-RUN apk add --no-cache curl linux-pam dumb-init dante
-# Add an unprivileged user.
-RUN adduser -S -D -u 8062 -H sockd
+# Install dante-server, sockd user will be created
+RUN apk add --no-cache curl linux-pam dumb-init dante-server
 # Default configuration
 COPY sockd.conf /etc/
 
