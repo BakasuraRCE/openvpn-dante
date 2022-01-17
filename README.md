@@ -1,66 +1,47 @@
 Supported tags and respective `Dockerfile` links
 ================================================
 
-  * [`latest` (Dockerfile)](https://github.com/BakasuraRCE/docker-dante/blob/master/Dockerfile) [![](https://images.microbadger.com/badges/image/bakasura/dante2.svg)](https://microbadger.com/images/bakasura/dante2 "Get your own image badge on microbadger.com")
+  * [`latest` (Dockerfile)](https://github.com/BakasuraRCE/openvpn-dante/blob/master/Dockerfile)
 
 
-What is Dante
+How to use this image
 -------------
 
-[**Dante**](http://www.inet.no/dante/index.html) consists of a SOCKS server and a SOCKS client, implementing RFC 1928 and related standards. It can in most cases be made transparent to clients, providing functionality somewhat similar to what could be described as a non-transparent Layer 4 router. For customers interested in controlling and monitoring access in or out of their network, the Dante SOCKS server can provide several benefits, including security and TCP/IP termination (no direct contact between hosts inside and outside of the customer network), resource control (bandwidth, sessions), logging (host information, data transferred), and authentication.
+You can use this image at same form that [dperson image](https://github.com/dperson/openvpn-client)
+Additional this expose the `1080` port as socks5 proxy server
 
-
-Usage example
+Example Compose File
 -------------
 
-    $ docker run -e workers=20 -d -p 1080:1080 bakasura/dante2
+```
+version: "3.8"
 
-Change its configuration by mounting a custom `/etc/sockd.conf`
-(see [sample config files](http://www.inet.no/dante/doc/latest/config/server.html)).
-
-
-### Change number of threads listening
-
-Use the environment variable `workers` to set the number of threads listening for connections(by default are 10)
-
-
-### Client-side set up
-
-Set your browser or application to use SOCKS v4 or v5 proxy `localhost` on port 1080,
-like for example:
-
-    $ curl --proxy socks5://localhost:1080 https://example.com
-
-... or set to use PAC script like:
-
-    function FindProxyForURL(url, host) {
-      return "SOCKS localhost:1080";
-    }
-
-
-### Requiring authentication
-
-The default config in this image allows everyone to use the proxy. You can add a simple authentication (which will send data unencrypted) by setting up a `Dockerfile` like:
-
-    FROM bakasura/dante2
-
-    # TODO: Replace 'john' and 'MyPassword' by any username/password you want.
-    RUN printf 'MyPassword\nMyPassword\n' | adduser john
-
-Uncomment line in `sockd.conf`:
-
-    socksmethod: username
-
-Then use SOCKS v5, for example:
-
-    $ curl --proxy socks5://john:MyPassword@localhost:1080 https://example.com
-
-Note: SOCKS v4 will be blocked.
-
-WARNING: Many browsers do **not** support SOCKS authentication (e.g. see this [Chrome bug](https://bugs.chromium.org/p/chromium/issues/detail?id=256785)).
-
-
-Feedbacks
----------
-
-Suggestions are welcome on our [GitHub issue tracker](https://github.com/BakasuraRCE/docker-dante/issues).
+services:
+  vpn:
+    image: bakasura/openvpn-dante:latest
+    # If you need IPv6
+    #sysctls:
+    #  net.ipv6.conf.all.disable_ipv6: 0
+    cap_add:
+      - NET_ADMIN
+    cap_drop:
+      - CAP_MKNOD
+    environment:
+      TZ: 'Etc/GMT-2'
+      FIREWALL: ''
+      GROUPID: '1000'
+    ports:
+      - "1080:1080"
+    volumes:
+      - /dev/net:/dev/net:z
+      # Put .ovpn configuration file in the /vpn directory (in "volumes:" above or
+      # launch using the command line arguments, IE pick one:
+      - ./vpn:/vpn
+      mode: replicated
+      replicas: 1
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+```
